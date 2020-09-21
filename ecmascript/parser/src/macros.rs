@@ -124,6 +124,12 @@ macro_rules! tok {
     (']') => {
         crate::token::Token::RBracket
     };
+    ("#{") => {
+        crate::token::Token::HashBrace
+    };
+    ("#[") => {
+        crate::token::Token::HashBracket
+    };
 
     ("async") => {
         crate::token::Token::Word(crate::token::Word::Ident(swc_atoms::js_word!("async")))

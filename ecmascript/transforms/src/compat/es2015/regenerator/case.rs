@@ -460,6 +460,9 @@ impl CaseHandler<'_> {
                 return NewExpr { callee, args, ..e }.into();
             }
 
+            Expr::Record(_) => todo!(),
+            Expr::Tuple(_) => todo!(),
+
             Expr::Object(obj) => {
                 let props = obj
                     .props

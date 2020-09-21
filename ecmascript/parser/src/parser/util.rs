@@ -268,6 +268,8 @@ pub(super) trait ExprExt {
             | Expr::Lit(..)
             | Expr::Array(..)
             | Expr::Object(..)
+            | Expr::Tuple(..)
+            | Expr::Record(..)
             | Expr::Fn(..)
             | Expr::Class(..)
             | Expr::Tpl(..)

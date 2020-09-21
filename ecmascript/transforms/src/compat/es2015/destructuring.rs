@@ -1051,8 +1051,10 @@ fn can_be_null(e: &Expr) -> bool {
         Expr::Lit(..) => false,
 
         Expr::Array(..)
+        | Expr::Tuple(..)
         | Expr::Arrow(..)
         | Expr::Object(..)
+        | Expr::Record(..)
         | Expr::Fn(..)
         | Expr::Class(..)
         | Expr::Tpl(..) => false,

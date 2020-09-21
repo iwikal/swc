@@ -545,6 +545,8 @@ define!({
         This(ThisExpr),
         Array(ArrayLit),
         Object(ObjectLit),
+        Tuple(TupleLit),
+        Record(RecordLit),
         Fn(FnExpr),
         Unary(UnaryExpr),
         Update(UpdateExpr),
@@ -587,6 +589,14 @@ define!({
         pub elems: Vec<Option<ExprOrSpread>>,
     }
     pub struct ObjectLit {
+        pub span: Span,
+        pub props: Vec<PropOrSpread>,
+    }
+    pub struct TupleLit {
+        pub span: Span,
+        pub elems: Vec<Option<ExprOrSpread>>,
+    }
+    pub struct RecordLit {
         pub span: Span,
         pub props: Vec<PropOrSpread>,
     }

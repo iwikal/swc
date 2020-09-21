@@ -31,6 +31,12 @@ pub enum Expr {
     #[tag("ObjectExpression")]
     Object(ObjectLit),
 
+    #[tag("TupleExpression")]
+    Tuple(TupleLit),
+
+    #[tag("RecordExpression")]
+    Record(RecordLit),
+
     #[tag("FunctionExpression")]
     #[is(name = "fn_expr")]
     Fn(FnExpr),
@@ -174,6 +180,26 @@ pub struct ArrayLit {
 #[ast_node("ObjectExpression")]
 #[derive(Eq, Hash)]
 pub struct ObjectLit {
+    pub span: Span,
+
+    #[serde(default, rename = "properties")]
+    pub props: Vec<PropOrSpread>,
+}
+
+/// Tuple literal.
+#[ast_node("TupleExpression")]
+#[derive(Eq, Hash)]
+pub struct TupleLit {
+    pub span: Span,
+
+    #[serde(default, rename = "elements")]
+    pub elems: Vec<Option<ExprOrSpread>>,
+}
+
+/// Record literal.
+#[ast_node("RecordExpression")]
+#[derive(Eq, Hash)]
+pub struct RecordLit {
     pub span: Span,
 
     #[serde(default, rename = "properties")]
@@ -497,6 +523,8 @@ pub enum PatOrExpr {
     #[tag("ThisExpression")]
     #[tag("ArrayExpression")]
     #[tag("ObjectExpression")]
+    #[tag("TupleExpression")]
+    #[tag("RecordExpression")]
     #[tag("FunctionExpression")]
     #[tag("UnaryExpression")]
     #[tag("UpdateExpression")]

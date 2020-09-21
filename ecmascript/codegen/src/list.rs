@@ -116,7 +116,20 @@ add_bitflags!(
             | Indented
             | Braces
             | NoSpaceIfEmpty,
+        RecordLiteralExpressionProperties: MultiLine
+            | CommaDelimited
+            | SpaceBetweenSiblings
+            | SpaceBetweenBraces
+            | Indented
+            | Braces
+            | NoSpaceIfEmpty,
         ArrayLiteralExpressionElements: PreserveLines
+            | CommaDelimited
+            | SpaceBetweenSiblings
+            | AllowTrailingComma
+            | Indented
+            | SquareBrackets,
+        TupleLiteralExpressionElements: PreserveLines
             | CommaDelimited
             | SpaceBetweenSiblings
             | AllowTrailingComma

@@ -200,7 +200,13 @@ impl StartsWithAlphaNum for Expr {
             // TODO(kdy1): Support `v => {}`
             Expr::Arrow(ArrowExpr { .. }) => false,
 
-            Expr::Tpl(_) | Expr::Update(_) | Expr::Array(_) | Expr::Object(_) | Expr::Paren(_) => {
+            Expr::Tpl(_)
+                | Expr::Update(_)
+                | Expr::Array(_)
+                | Expr::Object(_)
+                | Expr::Tuple(_)
+                | Expr::Record(_)
+                | Expr::Paren(_) => {
                 false
             }
 

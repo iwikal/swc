@@ -1,0 +1,132 @@
+warning: Module
+ --> $DIR/tests/span/js/expr/record.js:1:1
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: ModuleItem
+ --> $DIR/tests/span/js/expr/record.js:1:1
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: Stmt
+ --> $DIR/tests/span/js/expr/record.js:1:1
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: ExprStmt
+ --> $DIR/tests/span/js/expr/record.js:1:1
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: Expr
+ --> $DIR/tests/span/js/expr/record.js:1:1
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: ParenExpr
+ --> $DIR/tests/span/js/expr/record.js:1:1
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: Expr
+ --> $DIR/tests/span/js/expr/record.js:1:2
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |  ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: PropOrSpread
+ --> $DIR/tests/span/js/expr/record.js:1:5
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |     ^^^^^^
+
+warning: Prop
+ --> $DIR/tests/span/js/expr/record.js:1:5
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |     ^^^^^^
+
+warning: KeyValueProp
+ --> $DIR/tests/span/js/expr/record.js:1:5
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |     ^^^^^^
+
+warning: PropName
+ --> $DIR/tests/span/js/expr/record.js:1:5
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |     ^^^
+
+warning: Ident
+ --> $DIR/tests/span/js/expr/record.js:1:5
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |     ^^^
+
+warning: Expr
+ --> $DIR/tests/span/js/expr/record.js:1:10
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |          ^
+
+warning: Lit
+ --> $DIR/tests/span/js/expr/record.js:1:10
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |          ^
+
+warning: Number
+ --> $DIR/tests/span/js/expr/record.js:1:10
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |          ^
+
+warning: PropOrSpread
+ --> $DIR/tests/span/js/expr/record.js:1:13
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |             ^^^
+
+warning: Prop
+ --> $DIR/tests/span/js/expr/record.js:1:13
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |             ^^^
+
+warning: Ident
+ --> $DIR/tests/span/js/expr/record.js:1:13
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |             ^^^
+
+warning: PropOrSpread
+ --> $DIR/tests/span/js/expr/record.js:1:18
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |                  ^^^^^^
+
+warning: SpreadElement
+ --> $DIR/tests/span/js/expr/record.js:1:18
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |                  ^^^^^^
+
+warning: Expr
+ --> $DIR/tests/span/js/expr/record.js:1:21
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |                     ^^^
+
+warning: Ident
+ --> $DIR/tests/span/js/expr/record.js:1:21
+  |
+1 | (#{ foo: 0, bar, ...baz })
+  |                     ^^^
+

@@ -272,6 +272,14 @@ impl<'a, I: Tokens> Parser<I> {
                     return self.parse_object();
                 }
 
+                tok!("#[") => {
+                    return self.parse_tuple();
+                }
+
+                tok!("#{") => {
+                    return self.parse_record();
+                }
+
                 // Handle FunctionExpression and GeneratorExpression
                 tok!("function") => {
                     return self.parse_fn_expr();
@@ -413,6 +421,36 @@ impl<'a, I: Tokens> Parser<I> {
 
         let span = span!(start);
         Ok(Box::new(Expr::Array(ArrayLit { span, elems })))
+    }
+
+    fn parse_tuple(&mut self) -> PResult<Box<Expr>> {
+        trace_cur!(parse_tuple);
+
+        let start = cur_pos!();
+
+        assert_and_bump!("#[");
+        let mut elems = vec![];
+
+        while !eof!() && !is!(']') {
+            if is!(',') {
+                expect!(',');
+                elems.push(None);
+                continue;
+            }
+            elems.push(
+                self.include_in_expr(true)
+                    .parse_expr_or_spread()
+                    .map(Some)?,
+            );
+            if is!(',') {
+                expect!(',');
+            }
+        }
+
+        expect!(']');
+
+        let span = span!(start);
+        Ok(Box::new(Expr::Tuple(TupleLit { span, elems })))
     }
 
     fn parse_member_expr(&mut self) -> PResult<Box<Expr>> {

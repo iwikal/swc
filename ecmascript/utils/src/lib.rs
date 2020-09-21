@@ -880,7 +880,8 @@ pub trait ExprExt {
 
             // TODO
             Expr::Class(..) => true,
-            Expr::Array(ArrayLit { ref elems, .. }) => elems
+            Expr::Array(ArrayLit { ref elems, .. })
+                | Expr::Tuple(TupleLit { ref elems, .. }) => elems
                 .iter()
                 .filter_map(|e| e.as_ref())
                 .any(|e| e.expr.may_have_side_effects()),
@@ -924,7 +925,9 @@ pub trait ExprExt {
                     || alt.may_have_side_effects()
             }
 
-            Expr::Object(ObjectLit { ref props, .. }) => props.iter().any(|node| match node {
+            Expr::Object(ObjectLit { ref props, .. })
+                | Expr::Record(RecordLit { ref props, .. }) =>
+                props.iter().any(|node| match node {
                 PropOrSpread::Prop(node) => match &**node {
                     Prop::Shorthand(..) => false,
                     Prop::KeyValue(KeyValueProp { ref key, ref value }) => {
@@ -1694,9 +1697,7 @@ where
 
             Expr::Paren(e) => add_effects(v, e.expr),
 
-            Expr::Object(ObjectLit {
-                span, mut props, ..
-            }) => {
+            Expr::Object(ObjectLit { span, mut props, ..  }) => {
                 //
                 let mut has_spread = false;
                 props.retain(|node| match node {
@@ -1758,8 +1759,9 @@ where
                     })
                 }
             }
+            Expr::Record(RecordLit { .. }) => todo!(),
 
-            Expr::Array(ArrayLit { elems, .. }) => {
+            Expr::Array(ArrayLit { elems, .. }) | Expr::Tuple(TupleLit { elems, .. }) => {
                 elems.into_iter().filter_map(|e| e).fold(v, |v, e| {
                     add_effects(v, e.expr);
 

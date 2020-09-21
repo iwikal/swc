@@ -58,6 +58,13 @@ pub enum Token {
     /// '}'
     RBrace,
 
+    /// '#['
+    #[kind(before_expr, starts_expr)]
+    HashBracket,
+    /// '#{'
+    #[kind(before_expr, starts_expr)]
+    HashBrace,
+
     /// ';'
     #[kind(before_expr)]
     Semi,
@@ -588,6 +595,8 @@ impl Debug for Token {
             RBracket => write!(f, "]")?,
             LBrace => write!(f, "{{")?,
             RBrace => write!(f, "}}")?,
+            HashBracket => write!(f, "#[")?,
+            HashBrace => write!(f, "#{{")?,
             Semi => write!(f, ";")?,
             Comma => write!(f, ",")?,
             BackQuote => write!(f, "`")?,

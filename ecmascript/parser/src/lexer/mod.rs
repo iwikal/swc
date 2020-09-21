@@ -448,9 +448,23 @@ impl<'a, I: Input> Lexer<'a, I> {
             return Ok(None);
         }
 
-        if self.syntax.class_private_props() || self.syntax.class_private_methods() {
+        if self.syntax.class_private_props()
+            || self.syntax.class_private_methods()
+            || self.syntax.record_tuple()
+        {
             self.input.bump(); // '#'
-            return Ok(Some(Token::Hash));
+
+            return Ok(Some(match self.input.cur() {
+                Some('[') => {
+                    self.input.bump(); // '['
+                    Token::HashBracket
+                }
+                Some('{') => {
+                    self.input.bump(); // '{'
+                    Token::HashBrace
+                }
+                _ => Token::Hash,
+            }));
         }
 
         self.error(start, SyntaxError::Hash)?

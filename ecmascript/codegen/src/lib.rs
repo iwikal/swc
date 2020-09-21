@@ -490,10 +490,12 @@ impl<'a> Emitter<'a> {
             Expr::New(ref n) => emit!(n),
             Expr::Object(ref n) => emit!(n),
             Expr::Paren(ref n) => emit!(n),
+            Expr::Record(ref n) => emit!(n),
             Expr::Seq(ref n) => emit!(n),
             Expr::TaggedTpl(ref n) => emit!(n),
             Expr::This(ref n) => emit!(n),
             Expr::Tpl(ref n) => emit!(n),
+            Expr::Tuple(ref n) => emit!(n),
             Expr::Unary(ref n) => emit!(n),
             Expr::Update(ref n) => emit!(n),
             Expr::Yield(ref n) => emit!(n),
@@ -1292,6 +1294,38 @@ impl<'a> Emitter<'a> {
             node.span(),
             Some(&node.props),
             ListFormat::ObjectLiteralExpressionProperties,
+        )?;
+        if !self.cfg.minify {
+            self.wr.write_line()?;
+        }
+        punct!("}");
+    }
+
+    #[emitter]
+    fn emit_tuple_lit(&mut self, node: &TupleLit) -> Result {
+        self.emit_leading_comments_of_pos(node.span().lo())?;
+
+        punct!("#[");
+        self.emit_list(
+            node.span(),
+            Some(&node.elems),
+            ListFormat::ArrayLiteralExpressionElements,
+        )?;
+        punct!("]");
+    }
+
+    #[emitter]
+    fn emit_record_lit(&mut self, node: &RecordLit) -> Result {
+        self.emit_leading_comments_of_pos(node.span().lo())?;
+
+        punct!("#{");
+        if !self.cfg.minify {
+            self.wr.write_line()?;
+        }
+        self.emit_list(
+            node.span(),
+            Some(&node.props),
+            ListFormat::RecordLiteralExpressionProperties,
         )?;
         if !self.cfg.minify {
             self.wr.write_line()?;

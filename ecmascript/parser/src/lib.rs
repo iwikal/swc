@@ -272,6 +272,13 @@ impl Syntax {
             Syntax::Es(..) => true,
         }
     }
+
+    pub fn record_tuple(self) -> bool {
+        match self {
+            Syntax::Es(EsConfig { record_tuple: true, ..  }) => true,
+            _ => false // Not clear how this will work, so unsupported for now
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
@@ -382,6 +389,10 @@ pub struct EsConfig {
     /// Stage 3.
     #[serde(default)]
     pub top_level_await: bool,
+
+    /// Stage 2.
+    #[serde(default)]
+    pub record_tuple: bool,
 }
 
 /// Syntactic context.

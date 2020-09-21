@@ -36,6 +36,32 @@ impl<'a, I: Tokens> Parser<I> {
         self.make_object(span!(start), props)
     }
 
+    /// Parse a record literal.
+    pub(super) fn parse_record(&mut self) -> PResult<Box<Expr>> {
+        let start = cur_pos!();
+        assert_and_bump!("#{");
+
+        let mut props = vec![];
+
+        let mut first = true;
+        while !eat!('}') {
+            // Handle comma
+            if first {
+                first = false;
+            } else {
+                expect!(',');
+                if eat!('}') {
+                    break;
+                }
+            }
+
+            let prop = self.parse_record_prop()?;
+            props.push(prop);
+        }
+
+        self.make_record(span!(start), props)
+    }
+
     /// spec: 'PropertyName'
     pub(super) fn parse_prop_name(&mut self) -> PResult<PropName> {
         let ctx = self.ctx();
@@ -104,6 +130,95 @@ impl<'a, I: Tokens> Parser<I> {
 
             Ok(v)
         })
+    }
+
+    /// spec: 'RecordPropertyDefinition'
+    fn parse_record_prop(&mut self) -> PResult<PropOrSpread> {
+        let start = cur_pos!();
+
+        if eat!("...") {
+            // spread elemnent
+            let dot3_token = span!(start);
+
+            let expr = self.include_in_expr(true).parse_assignment_expr()?;
+
+            return Ok(PropOrSpread::Spread(SpreadElement { dot3_token, expr }));
+        }
+
+        let has_modifiers = self.eat_any_ts_modifier()?;
+        let modifiers_span = self.input.prev_span();
+
+        let key = self.parse_prop_name()?;
+
+        if self.input.syntax().typescript()
+            && !is_one_of!('(', '[', ':', ',', '?', '=', '*', IdentName)
+            && !(self.input.syntax().typescript() && is!('<'))
+            && !(is!('}')
+                && match key {
+                    PropName::Ident(..) => true,
+                    _ => false,
+                })
+        {
+            self.emit_err(self.input.cur_span(), SyntaxError::TS1005);
+            return Ok(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                key,
+                value: Box::new(Expr::Invalid(Invalid { span: span!(start) })),
+            }))));
+        }
+        //
+        // {[computed()]: a,}
+        // { 'a': a, }
+        // { 0: 1, }
+        // { a: expr, }
+        if eat!(':') {
+            let value = self.include_in_expr(true).parse_assignment_expr()?;
+            return Ok(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                key,
+                value,
+            }))));
+        }
+
+        let ident = match key {
+            PropName::Ident(ident) => ident,
+            // TODO
+            _ => unexpected!("identifier"),
+        };
+
+        if eat!('?') {
+            self.emit_err(self.input.prev_span(), SyntaxError::TS1162);
+        }
+
+        // `ident` from parse_prop_name is parsed as 'IdentifierName'
+        // It means we should check for invalid expressions like { for, }
+        if is_one_of!('=', ',', '}') {
+            let is_reserved_word = { self.ctx().is_reserved_word(&ident.sym) };
+            if is_reserved_word {
+                self.emit_err(ident.span, SyntaxError::ReservedWordInObjShorthandOrPat);
+            }
+
+            if eat!('=') {
+                let value = self.include_in_expr(true).parse_assignment_expr()?;
+                return Ok(PropOrSpread::Prop(Box::new(Prop::Assign(AssignProp {
+                    key: ident,
+                    value,
+                }))));
+            }
+
+            return Ok(PropOrSpread::Prop(Box::new(Prop::from(ident))));
+        }
+
+        if self.input.syntax().typescript() {
+            unexpected!(
+                "... , *,  (, [, :, , ?, =, an identifier, public, protected, private, \
+                 readonly, <."
+            )
+        } else {
+            unexpected!("... , *,  (, [, :, , ?, = or an identifier")
+        }
+    }
+
+    fn make_record(&mut self, span: Span, props: Vec<PropOrSpread>) -> PResult<Box<Expr>> {
+        Ok(Box::new(Expr::Record(RecordLit { span, props })))
     }
 }
 
