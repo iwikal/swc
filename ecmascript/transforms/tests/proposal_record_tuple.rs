@@ -33,8 +33,8 @@ test!(
     syntax(),
     |_| tr(),
     tuple_literal,
-    "#[a, b, c, ...d, e]",
-    "Tuple([a, b, c, ...d, e])"
+    "#[a, b,, ...d, e]",
+    "Tuple(a, b, undefined, ...d, e)"
 );
 
 test!(
@@ -42,7 +42,7 @@ test!(
     |_| tr(),
     nested_tuples,
     "#[ #[bar] ]",
-    "Tuple([ Tuple([ bar ]) ])"
+    "Tuple(Tuple(bar))"
 );
 
 test!(
@@ -50,5 +50,5 @@ test!(
     |_| tr(),
     nested_mixed,
     "#[ #{ foo: #[] } ]",
-    "Tuple([ Record({ foo: Tuple([]) }) ])"
+    "Tuple(Record({ foo: Tuple() }))"
 );

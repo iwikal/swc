@@ -1,7 +1,7 @@
 use crate::perf::Check;
-use swc_common::Span;
+use swc_common::{Span, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrayLit, CallExpr, Expr, ExprOrSpread, ExprOrSuper, Ident, ObjectLit, RecordLit, TupleLit,
+    CallExpr, Expr, ExprOrSpread, ExprOrSuper, Ident, ObjectLit, RecordLit, TupleLit,
 };
 use swc_ecma_transforms_macros::fast_path;
 use swc_ecma_utils::quote_ident;
@@ -21,14 +21,11 @@ impl Fold for RecordTuple {
         let e = validate!(e);
         let e = e.fold_children_with(self);
 
-        fn call_expr(span: Span, arg: Expr, callee: Ident) -> Expr {
+        fn call_expr(span: Span, args: Vec<ExprOrSpread>, callee: Ident) -> Expr {
             Expr::Call(CallExpr {
                 span,
                 callee: ExprOrSuper::Expr(Box::new(Expr::Ident(callee))),
-                args: vec![ExprOrSpread {
-                    expr: Box::new(arg),
-                    spread: None,
-                }],
+                args,
                 type_args: None,
             })
         }
@@ -36,12 +33,29 @@ impl Fold for RecordTuple {
         match e {
             Expr::Record(RecordLit { span, props }) => call_expr(
                 span,
-                Expr::Object(ObjectLit { span, props }),
+                vec![ExprOrSpread {
+                    expr: Box::new(Expr::Object(ObjectLit { span, props })),
+                    spread: None,
+                }],
                 quote_ident!("Record"),
             ),
             Expr::Tuple(TupleLit { elems, span }) => call_expr(
                 span,
-                Expr::Array(ArrayLit { span, elems }),
+                elems
+                    .into_iter()
+                    .map(|option| match option {
+                        Some(expr) => expr,
+                        None => ExprOrSpread {
+                            expr: Box::new(Expr::Ident(Ident {
+                                sym: js_word!("undefined"),
+                                span: DUMMY_SP,
+                                optional: false,
+                                type_ann: None,
+                            })),
+                            spread: None,
+                        },
+                    })
+                    .collect(),
                 quote_ident!("Tuple"),
             ),
             _ => e,
